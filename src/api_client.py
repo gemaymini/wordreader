@@ -32,6 +32,50 @@ class OpenRouterClient:
         self.max_retries = max_retries
         self._last_request_time = 0.0
 
+    def test_api_key(self) -> bool:
+        """
+        测试API key是否有效
+        
+        Returns:
+            True if API key is valid, False otherwise
+        """
+        test_messages = [{"role": "user", "content": "Hello, please respond with 'OK'"}]
+        
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/wordreader",
+            "X-Title": "WordReader API Test",
+        }
+
+        payload = {
+            "model": self.model,
+            "max_tokens": 50,
+            "temperature": 0.01,
+            "messages": test_messages,
+        }
+
+        try:
+            response = requests.post(
+                self.BASE_URL,
+                headers=headers,
+                json=payload,
+                timeout=30,
+            )
+            
+            if response.status_code == 200:
+                return True
+            elif response.status_code == 401:
+                print(f"❌ API key 无效或已过期")
+                return False
+            else:
+                print(f"❌ API 测试失败: HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ API 连接测试失败: {e}")
+            return False
+
     def _wait_for_rate_limit(self):
         """速率控制：确保请求之间有足够的间隔"""
         elapsed = time.time() - self._last_request_time
@@ -75,7 +119,10 @@ class OpenRouterClient:
 
                 if response.status_code == 200:
                     data = response.json()
-                    return data["choices"][0]["message"]["content"]
+                    content = data.get("choices", [{}])[0].get("message", {}).get("content")
+                    if content is None:
+                        raise RuntimeError("API返回的内容为空")
+                    return content
 
                 elif response.status_code == 429:
                     # 限流，使用指数退避
