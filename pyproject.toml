@@ -1,0 +1,10 @@
+[project]
+name = "wordreader"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.10"
+dependencies = [
+    "pypandoc>=1.16.2",
+    "pywin32>=311",
+    "requests>=2.32.5",
+]

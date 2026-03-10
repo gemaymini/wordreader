@@ -1,0 +1,11 @@
+{
+    "openrouter_api_key": "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",
+    "model": "qwen/qwen3.5-flash-02-23",
+    "heading_level": 1,
+    "max_tokens": 8192,
+    "temperature": 0.3,
+    "input_file": "C:/Users/gemaymini/Desktop/wordreader/input/论文-moa-nas-v3.docx",
+    "output_dir": "C:/Users/gemaymini/Desktop/wordreader/output",
+    "request_interval": 1.0,
+    "max_retries": 3
+}
